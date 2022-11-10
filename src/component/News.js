@@ -16,18 +16,18 @@ export class News extends Component {
     category: PropTypes.string,
   };
 
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     //console.log("Hello I am Construvtor from news component");
     this.state ={ 
       articles: [],
       loading: false,
       page:1
-      }
+      } 
+    document.title = `${this.props.category} - News` ;
   }
-  
-  async componentDidMount(){ 
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=513b6457396f41bb817e1190f2bae29a&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
+  async updateNews(){ 
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=513b6457396f41bb817e1190f2bae29a&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({loading : true})
     let data = await fetch(url);
     let parseData = await data.json()
@@ -37,43 +37,29 @@ export class News extends Component {
       loading: false
     })
   }
+  async componentDidMount(){
+    this.updateNews();
+  }
 
   handlePrevClick = async ()=>{
-    console.log("Previous");
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=513b6457396f41bb817e1190f2bae29a&page=${this.state.page -1}pageSize=${this.props.pageSize}`;
-    this.setState({loading : true});
-    let data = await fetch(url);
-    let parseData = await data.json()
-    console.log(parseData);
-    this.setState({
-      page:this.state.page - 1,
-      articles: parseData.articles,
-      loading: false
-    })
+    this.setState({page:this.state.page - 1 })
+    this.updateNews();
 
   }
 
   handleNextClick = async ()=>{
-    if(!(this.state.page + 1 > Math.ceil(this.state.totalResults/this.props.pageSize))){
-    console.log("Aage");
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=513b6457396f41bb817e1190f2bae29a&page=${this.state.page +1}&pageSize=${this.props.pageSize}`;
-    this.setState({loading : true});
-    let data = await fetch(url);
-    let parseData = await data.json()
-    console.log(parseData);
+    
     this.setState({
-      page:this.state.page + 1,
-      articles: parseData.articles,
-      loading: false
-    })
+      page:this.state.page + 1 })
+      this.updateNews();
   }
 
-  }
+  
 
   render() {
       return (
         <div className="container my-3">
-          <h1 z className="text-center my-5 style={{margin:'35px 0px'}}">News - TopHeadlines</h1>
+          <h1 z className="text-center my-5 style={{margin:'35px 0px'}}">News - TopHeadlines on {this.props.category}</h1>
           {this.state.loading && <Spinner />}
           <div className="row">
               {!this.state.loading && this.state.articles.map((element)=>{

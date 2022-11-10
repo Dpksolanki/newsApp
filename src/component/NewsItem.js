@@ -23,7 +23,7 @@ export class NewsItem extends Component {
             <h5 className="card-title">{title}... </h5>
             <p className="card-text">{description}...</p>
             <p className="card-text">
-              <small class="text-muted">
+              <small className="text-muted">
                 By {!author ? "Unknown" : author} on{" "}
                 {new Date(date).toDateString()}
               </small>
